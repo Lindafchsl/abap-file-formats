@@ -1,5 +1,5 @@
 ## JSON Files in ABAP File Formats
-JSON files are central since every ABAP object specifies at least a JSON file.
+JSON files are central as every ABAP object specifies at least one JSON file.
 Depending on the object, there might be additional files containing source code or other information, but there is always a JSON file with the pattern `<object_name>.<object_type>.json`, see [`File Names`](./specification.md#File-Names).
 For its annotation and validation, the ABAP file formats provide JSON Schemas.
 
@@ -12,7 +12,7 @@ For its annotation and validation, the ABAP file formats provide JSON Schemas.
 ## Format Versions and Compatibility
 
 The ABAP file format of object types will evolve over time.
-For this purpose, the JSON Schema specifies the field `formatVersion` and the file itself, is named after the version.
+For this purpose, the JSON Schema specifies the field `formatVersion`, and the file itself is named after the version.
 For example, the JSON Schema file for INTF for the first version is named `intf-v1.json` and specifies the `formatVersion` by
 ```
 "formatVersion": {
@@ -35,7 +35,7 @@ The following changes to file formats are considered compatible:
 
 - Descriptions or titles are changed
 - Non-mandatory fields are added
-- Values for a field (enum) that has a specified default value are added. Remark that in this case, if a system doesn't support the new enumeration value (e.g., in lower releases), the file format implementations will change the value to the default value
+- Values for a field (enum) that has a specified default value are added. Remark that in this case, if a system doesn't support the new enumeration value (e.g. in lower releases), the file format implementations will change the value to the default value
 
 
 
@@ -46,29 +46,29 @@ If a file format is changed incompatibly, a new file format with a new version h
 
 The following changes to file formats are considered incompatible:
 
-- Content type of the file is changed (e.g., from XML to JSON)
+- Content type of the file is changed (e.g. from XML to JSON)
 - Mandatory fields are added
-- Content structure within the file is changed (e.g., field is moved to a sub structure)
+- Content structure within the file is changed (e.g. field is moved to a sub structure)
 - Mandatory fields are removed  (old implementations might rely on the field to be mandatory)
 - Non-mandatory fields are removed
 - Fields are renamed
-- Type of a field is changed (e.g., from `string` to `number`)
+- Type of a field is changed (e.g. from `string` to `number`)
 - Semantic of a field is changed
-- Values of a field (e.g., in enum) are removed
+- Values of a field (e.g. in enum) are removed
 - Length of a field is shortened
 - Length of a field is extended if some systems cannot store this information
-- Values for a field (enum) that has no specified default value are added.
+- Values for a field (enum) that has no specified default value are added
 
 
 ## Writing JSON Schema with ABAP Types
 
-Each JSON Schema provided in this repository is automatically generated. For this purpose, an interface corresponds to each object type in which the necessary components of the type are described in the type `ty_main`. The name of the interface follows the pattern `zif_aff_<object_type>_v<version_number>`. Here, `<object_type>` can be either the (R3TR) object type or the (LIMU) sub object type, since R3TR and LIMU object types share the same namespace. `<version_number>` is an increasing integer that starts with `1``.
+Each JSON Schema provided in this repository is automatically generated. For this purpose, an interface corresponds to each object type in which the necessary components of the type are described in the type `ty_main`. The name of the interface follows the pattern `zif_aff_<object_type>_v<version_number>`. Here, `<object_type>` can be either the (R3TR) object type or the (LIMU) sub object type, since R3TR and LIMU object types share the same namespace. `<version_number>` is an increasing integer that starts with `1`.
 
-The ABAP types are self-contained, so it is possible to work on them in any system (e.g., in an SAP BTP, ABAP environment system).
+The ABAP types are self-contained, which means it is possible to work on them in any system (e.g. in an SAP BTP, ABAP environment system).
 
 Instead of hashed tables, please use sorted tables with a defined key.
 
-The JSON Schema is generated based on the fields and their ABAP type specification defined in `ty_main`. Each field defined in the structure is transformed to a JSON representation using a camel case notation (e.g, field `abap_language_version` is transformed to the field `abapLanguageVersion` in the JSON Schema). The ABAP type information fills the JSON Schema fields `type`, `length`, `minimum`, `maximum`.
+The JSON Schema is generated based on the fields and their ABAP type specification defined in `ty_main`. Each field defined in the structure is transformed to a JSON representation using a camel case notation (e.g. field `abap_language_version` is transformed to the field `abapLanguageVersion` in the JSON Schema). The ABAP type information fills the JSON Schema fields `type`, `length`, `minimum`, `maximum`.
 
 Fields `format_version` and `header` are mandatory and translate to `formatVersion` and `header` in the JSON Schema.
 The interface [`zif_aff_types_v1`](../file-formats/zif_aff_types_v1.intf.abap) offers a type for the format version and different headers for reuse, but also other often repeated types.
@@ -77,7 +77,7 @@ Apart from the mandatory fields mentioned above, it is recommended to add only c
 Top level fields shall be collected in one sub structure (ideally with a specific name) or within the structure `general_information`.
 
 To add more information to the JSON Schema than that provided by the ABAP type, ABAP Doc can be used.
-The comments are placed directly above the components of the type `ty_main`, but they are also read over several levels, e.g., in the case of nested structures.
+The comments are placed directly above the components of the type `ty_main`, but they are also read over several levels, e.g. in the case of nested structures.
 The different possibilities are summarized in the following.
 
 ### Type Mapping
@@ -190,15 +190,15 @@ The type specifies the underlying data type and links to the constant via the fo
 ```abap
 "! $values {@link source_name.data:constant_name}
 ```
-The names of the components of the constant are written as external (JSON) values to the JSON Schema after being transformed to camel case (e.g, component `badi_definition` is transformed to the enum value `badiDefinition` in the JSON Schema).
+The names of the components of the constant are written as external (JSON) values to the JSON Schema after being transformed to camel case (e.g. component `badi_definition` is transformed to the enum value `badiDefinition` in the JSON Schema).
 The corresponding values of the components represent the internal (ABAP) values.
 
-If not the transformed name of a component shall be used, the enum value can be overwritten by adding an ABAP Doc comment with the annotation keyword
+If the transformed name of a component shall not be used, the enum value can be overwritten by adding an ABAP Doc comment with the annotation keyword
 ```abap
 "! $enumValue 'newEnumValue'
 ```
 to the specific component.
-However, we recommend using this feature for overwriting the enum values rarely.
+However, we rarely recommend using this feature for overwriting the enum values.
 
 Titles and descriptions of the enum values are passed to the JSON Schema in the same way as described above.
 They are written in the fields `enumTitles` and `enumDescriptions`.
@@ -207,7 +207,7 @@ Remark: If an enum is used, it should be checked if one of the following points 
 1. The field with enum values is marked as required.
 2. The field with enum values has a specified default value.
 
-In case additional values for the enum should be added compatibly later, a default value must always be specified (see [Format Versions and Compatibility](#format-versions-and-compatibility)). If systems don't support the new enumeration value (e.g., in lower releases), the value will be changed to the default value by the file format implementations.
+In case additional values for the enum should be added compatibly later, a default value must always be specified (see [Format Versions and Compatibility](#format-versions-and-compatibility)). If systems don't support the new enumeration value (e.g. in lower releases), the value will be changed to the default value by the file format implementations.
 
 The order of the comments and annotations presented here is important: First, there is the comment for the title followed by the one for the description, in case they are both provided. After these two, the remaining annotations are always located. Between them, the order is irrelevant.
 
@@ -216,7 +216,7 @@ The order of the comments and annotations presented here is important: First, th
 Adding additional custom fields in any ABAP file formats JSON file is not allowed.
 
 Therefore, generated JSON Schemas contain the property `"additionalProperties": false`.
-This means, no additional fields can be added to the JSON files.
+This means that no additional fields can be added to the JSON files.
 
 If new fields are added to the ABAP file format, the JSON Schema will be updated with the new field.
 If fields are removed from the ABAP file format, a new JSON Schema will be defined and the `formatVersion` will be increased.
@@ -286,7 +286,7 @@ With the specification of the component `format_version` and `header` as well as
       abap_language_version TYPE ty_abap_language_version_src,
     END OF ty_header_60_src.
 ```
-This leads to the following generated JSON schema:
+This leads to the following generated JSON Schema:
 ```json
  {
   "$comment": "This file is autogenerated, do not edit manually, see https://github.com/SAP/abap-file-formats for more information.",
@@ -384,7 +384,7 @@ A full list of SAP supported BCP47 language tags can be found [here](./languages
 All translatable texts in the object shall be maintained in their original language.
 Translations of the texts shall be stored in separate files.
 
-The original language is not specified for sub objects. Sub objects have the same original version as their main objects.
+The original language is not specified for sub-objects. Sub-objects have the same original version as their main objects.
 
 ### ABAP Language Version
 
@@ -402,4 +402,4 @@ The field `abapLanguageVersion` is optional. Allowed values are `standard`, `clo
 Implementations of ABAP file formats can decide whether they serialize the ABAP language version.
 
 During deserialization, ABAP systems might change the ABAP language version needed in the specific context.
-E.g., SAP BTP, ABAP environment systems set the ABAP language version to `cloudDevelopment`, while systems that do not support the ABAP language version might set it to `standard`.
+E.g. SAP BTP, ABAP environment systems set the ABAP language version to `cloudDevelopment`, while systems that do not support the ABAP language version might set it to `standard`.
